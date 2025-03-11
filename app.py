@@ -1,25 +1,22 @@
-import os
-import json
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
-from flask_session import Session
+import cv2
 import pytesseract
-
-# Set Tesseract path for PythonAnywhere
-pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'
+import re
+from PIL import Image
+import numpy as np
+import os
+import uuid
+import json
+from flask_session import Session
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
-# Configure upload folder
-app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-
-# Session configuration
+# Configure session to use filesystem (you can choose other methods if preferred)
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
-app.config['SECRET_KEY'] = os.urandom(24)
 Session(app)
-
-# Rest of your existing app.py code remains the same
 
 class ReceiptItem:
     def __init__(self, description, price, is_taxable, original_price=None, discount=0.0, split_members=None, price_per_person=0.0):
