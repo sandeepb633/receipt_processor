@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Split Bill Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Split Bill Results</h1>
+        </header>
+
+        <div class="main-content">
+            <!-- Left Side: Final List -->
+            <div class="final-list">
+                <h2>Final Item List</h2>
+                <div class="items-container">
+                    {% for item in items %}
+                    <div class="item">
+                        <div class="item-header">
+                            <span class="item-number">{{ loop.index }}</span>
+                            <span class="item-name">{{ item.description }}</span>
+                        </div>
+                        {% if item.discount > 0 %}
+                            <div class="price-info">
+                                <span>Original: ${{ item.original_price }}</span>
+                                <span class="discount">-${{ item.discount }}</span>
+                                <span class="final">Final: ${{ item.price }}</span>
+                            </div>
+                        {% else %}
+                            <div class="price-info">
+                                <span class="final">${{ item.price }}</span>
+                            </div>
+                        {% endif %}
+                        <span class="tax-badge {{ 'taxable' if item.is_taxable else 'non-taxable' }}">
+                            {{ 'Taxable' if item.is_taxable else 'Non-taxable' }}
+                        </span>
+                    </div>
+                    {% endfor %}
+                    <div class="total-amount">
+                        Total: ${{ "%.2f"|format(original_total) }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Member Cards -->
+            <div class="member-splits">
+                <h2>Member Splits</h2>
+                <div class="member-cards">
+                    {% for member in member_summaries %}
+                    <div class="member-card">
+                        <div class="member-name">{{ member.name }}</div>
+                        <div class="member-items">
+                            {% for split_item in member.split_items %}
+                            <div class="split-item">
+                                <span>{{ split_item.item }}</span>
+                                <span>${{ "%.2f"|format(split_item.amount) }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="member-total">
+                            <div>Subtotal: ${{ "%.2f"|format(member.subtotal) }}</div>
+                            <div>Tax: ${{ "%.2f"|format(member.tax) }}</div>
+                            <div class="final-total">Total: ${{ "%.2f"|format(member.total) }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom: Verification -->
+        <div class="verification">
+            <div class="verification-content {{ 'success' if is_verified else 'error' }}">
+                <div class="verification-amounts">
+                    <span>Original Total: ${{ "%.2f"|format(original_total) }}</span>
+                    <span>Split Total: ${{ "%.2f"|format(total_all_members) }}</span>
+                    <span>With Tax: ${{ "%.2f"|format(total_all_members_with_tax) }}</span>
+                </div>
+                <div class="verification-status">
+                    {{ 'Verified ✓' if is_verified else 'Mismatch ✗' }}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

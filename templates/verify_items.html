@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Extracted Items</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Verification of Captured Items</h1>
+    <h2>Captured Items from Receipt</h2>
+    <div class="captured-items">
+        {% for item in items %}
+        <p>{{ loop.index }}. {{ item.description }}: 
+            {% if item.discount > 0 %}
+                <br>Original: ${{ item.original_price }}
+                <br>Discount: ${{ item.discount }}
+                <br>Final: ${{ item.price }}
+            {% else %}
+                ${{ item.price }}
+            {% endif %}
+            ({{ 'Taxable' if item.is_taxable else 'Non-taxable' }})
+        </p>
+        {% endfor %}
+    </div>
+    
+    <h2>Verification of Captured Items</h2>
+    <p>Please review the captured items above.</p>
+    <p>Are all items from the receipt captured correctly?</p>
+    
+    <form method="post">
+        <input type="hidden" name="action" value="add_item">
+        <label for="description">Enter item description:</label>
+        <input type="text" id="description" name="description" required>
+        
+        <label for="price">Enter item price:</label>
+        <input type="number" id="price" name="price" step="0.01" required>
+        
+        <label for="is_taxable">Is item taxable?</label>
+        <input type="checkbox" id="is_taxable" name="is_taxable">
+        
+        <button type="submit">Add missing item</button>
+    </form>
+    
+    <form method="post">
+        <input type="hidden" name="action" value="continue">
+        <button type="submit">Continue with current items</button>
+    </form>
+</body>
+</html>

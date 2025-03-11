@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Prices</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Edit Prices</h1>
+    
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    {% for item in items %}
+    <div class="item">
+        <form method="post">
+            <h3>{{ loop.index }}. {{ item.description }}</h3>
+            {% if item.discount > 0 %}
+            <p>Original: ${{ "%.2f"|format(item.original_price) }}</p>
+            <p>Discount: ${{ "%.2f"|format(item.discount) }}</p>
+            <p>Final: ${{ "%.2f"|format(item.price) }}</p>
+            {% else %}
+            <p>Current Price: ${{ "%.2f"|format(item.price) }}</p>
+            {% endif %}
+            <label for="new_price_{{ loop.index0 }}">Enter new price:</label>
+            <input type="number" 
+                   id="new_price_{{ loop.index0 }}" 
+                   name="new_price" 
+                   step="0.01" 
+                   min="0"
+                   placeholder="{{ "%.2f"|format(item.price) }}">
+            <input type="hidden" name="item_index" value="{{ loop.index0 }}">
+            <button type="submit" name="action" value="edit_price">Update Price</button>
+        </form>
+    </div>
+    {% endfor %}
+    
+    <form method="post" class="finish-form">
+        <button type="submit" name="action" value="finish">Finish Editing</button>
+    </form>
+</body>
+</html>

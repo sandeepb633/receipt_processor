@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Split Bill</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Split Bill</h1>
+    <form method="post" id="splitBillForm">
+        {% for item in items %}
+        <div class="item">
+            <h3>Processing: {{ item.description }}</h3>
+            {% if item.discount > 0 %}
+            <p>Original Price: ${{ item.original_price }}</p>
+            <p>Discount: ${{ item.discount }}</p>
+            <p>Final Price: ${{ item.price }}</p>
+            {% else %}
+            <p>Price: ${{ item.price }}</p>
+            {% endif %}
+            <p>{{ 'Taxable (13%)' if item.is_taxable else 'Non-taxable' }}</p>
+            <label for="members_{{ item.description }}">Enter number of members to split this item (0 to skip):</label>
+            <input type="number" id="members_{{ item.description }}" name="members_{{ item.description }}" min="0" value="0">
+            
+            <div id="members_{{ item.description }}_container"></div>
+            
+            <script>
+                document.getElementById('members_{{ item.description }}').addEventListener('input', function() {
+                    const container = document.getElementById('members_{{ item.description }}_container');
+                    container.innerHTML = '';
+                    const numMembers = parseInt(this.value);
+                    for (let i = 0; i < numMembers; i++) {
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        input.name = `member_{{ item.description }}_${i}`;  // Remove trailing underscore
+                        input.placeholder = `Enter name for member ${i+1}`;
+                        input.required = true;
+                        container.appendChild(input);
+                        container.appendChild(document.createElement('br'));
+                    }
+                });
+            </script>
+        </div>
+        {% endfor %}
+        <button type="submit">Split Bill</button>
+    </form>
+</body>
+</html>
