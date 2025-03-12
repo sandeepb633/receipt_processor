@@ -1,11 +1,8 @@
-# Use a single, compatible Flask version
 Flask==2.3.2
-
-# Other dependencies
 flask-session==0.4.0
 gunicorn==20.1.0
 opencv-python-headless==4.5.5.62
 pytesseract==0.3.8
 Pillow==9.0.0
-numpy==2.2.3
-Werkzeug==2.3.3
+numpy==1.21.5  # Use this version for compatibility with OpenCV
+Werkzeug==2.3.2
