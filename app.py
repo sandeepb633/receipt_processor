@@ -369,4 +369,6 @@ def edit_prices():
     return render_template('edit_prices.html', items=items)
 
 if __name__ == '__main__':
-
+    # DO NOT RUN app.run() IN A RENDER DEPLOYMENT
+    # app.run(debug=False) # debug=False is crucial for production
+    pass # Remove this line if you are running locally for testing
