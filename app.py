@@ -13,10 +13,22 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
-# Configure session to use filesystem (you can choose other methods if preferred)
+# Configure Flask-Session
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
+app.config["SESSION_FILE_DIR"] = "/tmp/flask_session"  # Directory to store session files
+app.config["SESSION_COOKIE_NAME"] = "your_session_cookie_name"  # Set a session cookie name
+
+# Ensure the session directory exists
+import os
+if not os.path.exists(app.config["SESSION_FILE_DIR"]):
+    os.makedirs(app.config["SESSION_FILE_DIR"])
+
+# Initialize Flask-Session
 Session(app)
+
+# Set a secret key for session management
+app.secret_key = '1755df8f0627ba9ef5a125181453f910abeefcfd5dd939c41401a9ff19f9489a'  # Replace with a secure secret key
 
 class ReceiptItem:
     def __init__(self, description, price, is_taxable, original_price=None, discount=0.0, split_members=None, price_per_person=0.0):
@@ -368,5 +380,5 @@ def edit_prices():
     return render_template('edit_prices.html', items=items)
 
 if __name__ == '__main__':
-    app.secret_key = 'your_secret_key_here'  # Replace with a secure secret key
+    app.secret_key = '1755df8f0627ba9ef5a125181453f910abeefcfd5dd939c41401a9ff19f9489a'  # Replace with a secure secret key
     app.run(debug=True)
