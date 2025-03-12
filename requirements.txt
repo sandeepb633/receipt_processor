@@ -1,7 +1,7 @@
 Flask==2.3.2
 flask-session==0.4.0
 gunicorn==20.1.0
-opencv-python-headless==4.7.0.64  # Updated OpenCV
+opencv-python-headless==4.7.0.72  # Updated OpenCV
 pytesseract==0.3.8
 Pillow==9.0.0
 numpy==1.23.5  # Compatible with Python 3.11
