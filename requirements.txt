@@ -6,3 +6,4 @@ pytesseract==0.3.8
 Pillow==9.0.0
 numpy==1.23.5  # Compatible with Python 3.11
 Werkzeug>=2.3.3  # Updated Werkzeug
+redis
