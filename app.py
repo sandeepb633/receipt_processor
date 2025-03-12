@@ -8,16 +8,20 @@ import os
 import uuid
 import json
 from flask_session import Session
-import redis
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
-# Configure Flask-Session using Redis
-app.config["SESSION_TYPE"] = "redis"
-app.config["SESSION_REDIS"] = redis.from_url(os.environ.get("REDIS_URL")) # Get Redis URL from Render environment variable
+# Configure Flask-Session using filesystem (for Render - adjust path)
+app.config["SESSION_TYPE"] = "filesystem"
+app.config["SESSION_FILE_DIR"] = "/opt/render/project/src/sessions" # Crucial change: Use a path within your project directory
 app.secret_key = os.environ.get("FLASK_SECRET_KEY") # Get secret key from Render environment variable
+
+# Ensure the session directory exists
+os.makedirs(app.config["SESSION_FILE_DIR"], exist_ok=True) # exist_ok=True prevents errors if the directory already exists
+
+Session(app)
 
 class ReceiptItem:
     def __init__(self, description, price, is_taxable, original_price=None, discount=0.0, split_members=None, price_per_person=0.0):
@@ -370,5 +374,4 @@ def edit_prices():
 
 if __name__ == '__main__':
     # DO NOT RUN app.run() IN A RENDER DEPLOYMENT
-    # app.run(debug=False) # debug=False is crucial for production
-    pass # Remove this line if you are running locally for testing
+    app.run(debug=True) # debug=True is okay for local development only
